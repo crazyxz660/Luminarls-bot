@@ -2055,34 +2055,54 @@ async def ping(interaction: discord.Interaction):
     # Edita a mensagem inicial com o embed final
     await message.edit(content=None, embed=embed)
 
-@bot.tree.command(name="infolumi", description="Veja informações sobre a Luminarls!")
+class LinksView(discord.ui.View):
+    def __init__(self):
+        super().__init__()
+        self.add_item(discord.ui.Button(
+            label=" Me adicione", 
+            url="https://discord.com/oauth2/authorize?client_id=1351585153209597992&permissions=2147567623&integration_type=0&scope=bot",
+            style=discord.ButtonStyle.link
+        ))
+        self.add_item(discord.ui.Button(
+            label="Servidor de Suporte", 
+            url="https://discord.gg/XnuTBECY99",
+            style=discord.ButtonStyle.link
+        ))
+
+@bot.tree.command(name="luminfo", description="Veja informações sobre a Luminarls!")
 async def infolumi(interaction: discord.Interaction):
     total_servidores = len(bot.guilds)
     total_comandos = len(bot.tree.get_commands())
 
+    owner = bot.application.owner  # Obtém o dono do bot
+    owner_avatar = owner.avatar.url if owner.avatar else owner.default_avatar.url
+
     embed = discord.Embed(
         title="🌙 Sobre a Luminarls",
         description=(
-            f"Eu estou atualmente em **{total_servidores} servidores** e tenho **{total_comandos} comandos**.\n\n"
-            "Fui criada em **18 de março** para tornar os servidores mais **divertidos e inteligentes**!\n\n"
-            "Eu fui programada em **Python** usando **discord.py** e me mantenho online usando a **hospedagem do Visual Studio**.\n\n"
-            "💜 Desenvolvida por `crazy`"
+            f"Atualmente, faço parte de **{total_servidores} servidores** e conto com **{total_comandos} comandos** prontos para deixar sua experiência ainda melhor!\n\n"
+            "Minha jornada começou em **18 de março**, com a missão de trazer mais **diversão e inteligência** para os servidores do Discord.\n\n"
+            "Desenvolvida com a linguagem [Python](https://www.python.org/) e utilizando a poderosa biblioteca [discord.py](https://discordpy.readthedocs.io/en/stable/), "
+            "mantenho-me sempre ativa graças à hospedagem do **Visual Studio**."
         ),
         color=discord.Color.purple()
     )
 
     embed.set_thumbnail(url="https://cdn.discordapp.com/avatars/1351585153209597992/a0c671f9c2819ef8511c843e1ee9b947.png?size=1024")
-    embed.add_field(name="🔗 Me adicione", value="[Clique aqui](https://discord.com/oauth2/authorize?client_id=1351585153209597992&permissions=1153400515923127&integration_type=0&scope=bot)", inline=True)
-    embed.add_field(name="🛠 Servidor de Suporte", value="[Entre aqui](https://discord.gg/XnuTBECY99)", inline=True)
+    embed.set_footer(text="🤍 Desenvolvida e criada por crazy", icon_url=owner_avatar)
 
-    await interaction.response.send_message(embed=embed)
-
+    await interaction.response.send_message(embed=embed, view=LinksView())
+    
 class VerImagem(discord.ui.View):
     def __init__(self, url):
         super().__init__()
-        self.add_item(discord.ui.Button(label="🔗 Abrir no navegador", url=url, style=discord.ButtonStyle.link))
+        self.add_item(discord.ui.Button(
+            label="🔗 Abrir no navegador", 
+            url=url, 
+            style=discord.ButtonStyle.link
+        ))
 
-@bot.tree.command(name="avatarver", description="Exibe o avatar de um usuário.")  # Nome atualizado
+@bot.tree.command(name="avatarver", description="Exibe o avatar de um usuário.")
 @app_commands.describe(user="Usuário para ver o avatar (opcional)")
 async def avatarver(interaction: discord.Interaction, user: discord.Member = None):
     user = user or interaction.user  
@@ -2094,7 +2114,7 @@ async def avatarver(interaction: discord.Interaction, user: discord.Member = Non
     )
     embed.set_image(url=avatar_url)
 
-    await interaction.response.send_message(embed=embed, view=VerImagem(avatar_url))  # Adicionando a view
+    await interaction.response.send_message(embed=embed, view=VerImagem(avatar_url))
 
 # Comando /banner
 @bot.tree.command(name="banner", description="Exibe o banner de um usuário.")
@@ -2172,6 +2192,7 @@ async def on_ready():
 
     # Inicia a troca de status
     bot.loop.create_task(change_status())
-
+# Defina seu token diretamente (⚠️ Não compartilhe este código!)
+TOKEN = ""
 # Inicia o bot com o token
 bot.run(TOKEN)
